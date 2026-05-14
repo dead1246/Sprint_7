@@ -19,6 +19,16 @@ class OrderData:
         "deliveryDate": "2026-05-12",
         "comment": "Created by autotest",
     }
+    ORDER_WITHOUT_COLOR = DEFAULT_ORDER.copy()
+    ORDER_WITH_BLACK_COLOR = {**DEFAULT_ORDER, "color": ["BLACK"]}
+    ORDER_WITH_GREY_COLOR = {**DEFAULT_ORDER, "color": ["GREY"]}
+    ORDER_WITH_BOTH_COLORS = {**DEFAULT_ORDER, "color": ["BLACK", "GREY"]}
+    ORDER_PAYLOADS_WITH_COLOR_OPTIONS = [
+        ORDER_WITH_BLACK_COLOR,
+        ORDER_WITH_GREY_COLOR,
+        ORDER_WITH_BOTH_COLORS,
+        ORDER_WITHOUT_COLOR,
+    ]
 
     ORDER_NOT_FOUND_MESSAGE = "Заказ не найден"
     ORDER_ID_NOT_FOUND_MESSAGE = "Заказа с таким id не существует"

@@ -1,18 +1,31 @@
 import pytest
 
-from helpers import cancel_order, create_courier_and_return_payload_with_id, create_order, delete_courier
+from api_methods import CourierApi, OrderApi
+from data import OrderData
+from helpers import generate_courier_payload
 
 
 @pytest.fixture
 def courier():
-    courier_data = create_courier_and_return_payload_with_id()
-    yield courier_data
-    delete_courier(courier_data.get("id"))
+    payload = generate_courier_payload()
+    create_response = CourierApi.create_courier(payload)
+    login_response = CourierApi.login_courier({"login": payload["login"], "password": payload["password"]})
+    courier_id = login_response.json()["id"]
+    yield {"payload": payload, "id": courier_id, "create_response": create_response}
+    CourierApi.delete_courier(courier_id)
 
 
 @pytest.fixture
 def order():
-    response = create_order()
-    track = response.json().get("track") if response.status_code == 201 else None
+    response = OrderApi.create_order(OrderData.ORDER_WITHOUT_COLOR)
+    track = response.json()["track"]
     yield {"response": response, "track": track}
-    cancel_order(track)
+    OrderApi.cancel_order({"track": track})
+
+
+@pytest.fixture
+def created_order(request):
+    response = OrderApi.create_order(request.param)
+    track = response.json()["track"]
+    yield {"response": response, "track": track}
+    OrderApi.cancel_order({"track": track})
